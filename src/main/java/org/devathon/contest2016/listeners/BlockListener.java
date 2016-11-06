@@ -1,5 +1,7 @@
 package org.devathon.contest2016.listeners;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -7,7 +9,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.devathon.contest2016.RecipeCreator;
-import org.devathon.contest2016.bot.BotStructure;
+import org.devathon.contest2016.bot.BotManager;
 
 public class BlockListener implements Listener
 {
@@ -24,19 +26,14 @@ public class BlockListener implements Listener
         if (meta.getDisplayName().equalsIgnoreCase(RecipeCreator.CORE_ITEM_NAME))
         {
             block.setAmount(1);
-            
-            new BotStructure(event.getBlock().getLocation(), null);
-//            ComponentBuilder builder = new ComponentBuilder("[Bot] ")
-//                    .color(ChatColor.GOLD)
-//                    .append("The bot is coming soon!")
-//                    .color(ChatColor.GRAY)
-//                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-//                            new ComponentBuilder("Like, really soon.").color(ChatColor.GREEN).create()));
-//            event.getPlayer().spigot().sendMessage(builder.create());
-//
-//
-//
-//            event.setCancelled(true);
+    
+            BotManager.getInstance().create(event.getPlayer());
+//            BotStructure.create(event.getPlayer().getLocation());
+            ComponentBuilder builder = new ComponentBuilder("[EvilBot-3000] ")
+                    .color(ChatColor.GOLD)
+                    .append("You should not have awakened me.")
+                    .color(ChatColor.RED);
+            event.getPlayer().spigot().sendMessage(builder.create());
         }
     }
 }

@@ -1,23 +1,21 @@
 package org.devathon.contest2016;
 
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.devathon.contest2016.bot.Bot;
+import org.devathon.contest2016.bot.BotManager;
 import org.devathon.contest2016.listeners.BlockListener;
+import org.devathon.contest2016.listeners.BotListener;
+import org.devathon.contest2016.listeners.PlayerListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class DevathonPlugin extends JavaPlugin {
-    private Map<Player, Bot> currentBots;
+public class DevathonPlugin extends JavaPlugin
+{
     private static DevathonPlugin plugin;
     
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         plugin = this;
         
-        currentBots = new HashMap<>();
-
         getLogger().info("Loading recipes...");
         
         new RecipeCreator().addRecipes();
@@ -25,11 +23,18 @@ public class DevathonPlugin extends JavaPlugin {
         getLogger().info("Registering stuff...");
         
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new BotListener(), this);
     }
-
+    
     @Override
-    public void onDisable() {
+    public void onDisable()
+    {
         // put your disable code here
+        getLogger().info("Removing bots...");
+        
+        BotManager.getInstance().getPlayerBotMap().values().forEach(Bot::totallyDestroy);
+        BotManager.getInstance().getPlayerBotMap().clear();
     }
     
     public static DevathonPlugin getPlugin()

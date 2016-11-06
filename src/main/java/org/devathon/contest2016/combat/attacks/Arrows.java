@@ -37,6 +37,15 @@ public class Arrows implements Attack
     @Override
     public void execute()
     {
-        
+        for (int i = 0; i < 10; i++)
+        {
+            world.spawnArrow(bot.getBotLocation(), bot.getBotLocation().toVector().multiply(.5f), 1.2f, .5f);
+        }
+    }
+    
+    @Override
+    public void tick()
+    {
+        //
     }
 }

@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 public class RecipeCreator
 {
@@ -16,18 +16,18 @@ public class RecipeCreator
     /**
      * Register the plugin's recipes.
      */
-    public void addRecipes()
+    void addRecipes()
     {
         Bukkit.getServer().addRecipe(createBotCore());
     }
     
     private ShapedRecipe createBotCore()
     {
-        ItemStack core = new ItemStack(Material.PURPUR_BLOCK, 1);
+        ItemStack core = new ItemStack(Material.NETHER_BRICK, 1);
         ItemMeta meta = core.getItemMeta();
         
         meta.setDisplayName(CORE_ITEM_NAME);
-        meta.setLore(Collections.singletonList(ChatColor.GOLD.toString() + ChatColor.ITALIC + "The dangerous bot. Place this and be ready to fight!"));
+        meta.setLore(Arrays.asList(ChatColor.GOLD.toString() + ChatColor.ITALIC + "The dangerous bot.", ChatColor.RED + "Place this and be ready to fight!"));
         
         core.setItemMeta(meta);
         

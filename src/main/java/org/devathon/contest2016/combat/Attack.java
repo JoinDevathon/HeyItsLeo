@@ -5,4 +5,6 @@ public interface Attack
     double chance();
     
     void execute();
+    
+    void tick();
 }
