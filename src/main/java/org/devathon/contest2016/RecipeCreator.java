@@ -11,6 +11,8 @@ import java.util.Collections;
 
 public class RecipeCreator
 {
+    public static final String CORE_ITEM_NAME = ChatColor.AQUA.toString() + ChatColor.BOLD + "Bot Core";
+    
     /**
      * Register the plugin's recipes.
      */
@@ -24,7 +26,7 @@ public class RecipeCreator
         ItemStack core = new ItemStack(Material.PURPUR_BLOCK, 1);
         ItemMeta meta = core.getItemMeta();
         
-        meta.setDisplayName(ChatColor.AQUA.toString() + ChatColor.BOLD + "Bot Core");
+        meta.setDisplayName(CORE_ITEM_NAME);
         meta.setLore(Collections.singletonList(ChatColor.GOLD.toString() + ChatColor.ITALIC + "The dangerous bot. Place this and be ready to fight!"));
         
         core.setItemMeta(meta);
