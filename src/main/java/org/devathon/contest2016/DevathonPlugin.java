@@ -6,7 +6,10 @@ public class DevathonPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // put your enable code here
+//         put your enable code here
+        getLogger().info("Loading recipes...");
+        
+        new RecipeCreator().addRecipes();
     }
 
     @Override
