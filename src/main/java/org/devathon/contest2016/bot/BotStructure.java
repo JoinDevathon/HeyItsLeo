@@ -11,6 +11,7 @@ import org.devathon.contest2016.structures.IStructure;
 
 public class BotStructure extends BukkitRunnable implements IStructure
 {
+    public static final String BOT_NAME = ChatColor.RED.toString() + ChatColor.ITALIC.toString() + "EvilBot";
     private final Location location;
     private ArmorStand stand;
     
@@ -39,11 +40,13 @@ public class BotStructure extends BukkitRunnable implements IStructure
         stand.setBasePlate(false);
         stand.setCollidable(false);
         stand.setArms(true);
+        stand.setInvulnerable(true);
+        stand.setCanPickupItems(false);
         
-        stand.setCustomName(ChatColor.RED.toString() + ChatColor.ITALIC.toString() + "EvilBot");
+        stand.setCustomName(BOT_NAME);
         stand.setCustomNameVisible(true);
         
-        stand.setHelmet(new ItemStack(Material.DRAGONS_BREATH));
+        stand.setHelmet(new ItemStack(Material.DRAGON_EGG, 1));
         stand.setItemInHand(new ItemStack(Material.DIAMOND_SWORD));
     }
     

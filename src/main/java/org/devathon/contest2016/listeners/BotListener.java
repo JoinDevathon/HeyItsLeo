@@ -17,6 +17,7 @@ import org.devathon.contest2016.util.PluginMessenger;
 public class BotListener implements Listener
 {
     @EventHandler
+    @SuppressWarnings({"deprecation"})
     public void onInteract(EntityDamageByEntityEvent event)
     {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof ArmorStand)
@@ -26,9 +27,12 @@ public class BotListener implements Listener
             
             Bot bot = BotManager.getInstance().getByStand(armorStand);
             
+            event.setCancelled(true);
+            event.setDamage(0);
+            
             if (bot != null)
             {
-                ItemStack item = attacker.getItemOnCursor();
+                ItemStack item = attacker.getEquipment().getItemInMainHand();
                 double damage = 5.5d;
                 
                 if (item != null)
@@ -58,16 +62,19 @@ public class BotListener implements Listener
                     }
                 }
                 
-                bot.doDamage(damage);
+                bot.doDamage(damage, attacker);
                 
-                ComponentBuilder dmg = PluginMessenger.prefix()
-                        .append("You attacked the Bot ")
-                        .color(ChatColor.RED)
-                        .append("and did ")
-                        .color(ChatColor.GRAY)
-                        .append("" + damage + " Damage")
-                        .color(ChatColor.AQUA);
-                attacker.spigot().sendMessage(dmg.create());
+                if (bot.getHealth() > 0)
+                {
+                    ComponentBuilder dmg = PluginMessenger.prefix()
+                            .append("You attacked the Bot ")
+                            .color(ChatColor.RED)
+                            .append("and did ")
+                            .color(ChatColor.GRAY)
+                            .append("" + damage + " Damage")
+                            .color(ChatColor.AQUA);
+                    attacker.spigot().sendMessage(dmg.create());
+                }
             }
         }
     }

@@ -12,6 +12,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.devathon.contest2016.DevathonPlugin;
 import org.devathon.contest2016.combat.Attack;
@@ -22,11 +24,13 @@ import org.devathon.contest2016.util.PluginMessenger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Bot extends BukkitRunnable
 {
     private final double TARGET_RADIUS = 10D;
+    private final double MAX_HEALTH = 1000D;
     
     private final Player player;
     private final World world;
@@ -35,16 +39,19 @@ public class Bot extends BukkitRunnable
     private final Location botLocation;
     private final BotStructure structure;
     
+    private final UUID uniqueId;
+    
     private final ArrayList<Attack> attacks;
     
     private List<LivingEntity> targets;
     private List<Block> blocks;
     private boolean attack;
     
-    private double health = 1000D;
+    private double health = MAX_HEALTH;
     
     public Bot(Player player, BotStructure structure)
     {
+        this.uniqueId = UUID.randomUUID();
         this.player = player;
         this.world = player.getWorld();
         this.playerLocation = player.getLocation().add(0, 0, 10);
@@ -78,6 +85,7 @@ public class Bot extends BukkitRunnable
         this.targets = new ArrayList<>();
         
         destroyBlocks();
+        structure.remove();
     }
     
     @Override
@@ -96,28 +104,28 @@ public class Bot extends BukkitRunnable
         this.attack = true;
         
         runTaskTimer(DevathonPlugin.getPlugin(), 10L, 10L);
-    
-        attack();
+        
+        attack(player);
     }
     
-    private void attack()
+    private void attack(Player player)
     {
         attacks.forEach(Attack::tick);
         
-        TObjectDoubleMap<Attack> byWeight = new TObjectDoubleHashMap<>();
+        TObjectDoubleMap<Attack> byChance = new TObjectDoubleHashMap<>();
         
         for (Attack attack : attacks)
         {
             double chance = attack.chance();
             
             if (chance > 0)
-                byWeight.put(attack, chance);
+                byChance.put(attack, chance);
         }
         
-        Attack attack = selectBestAttack(byWeight);
+        Attack attack = selectBestAttack(byChance);
         
         if (attack != null)
-            attack.execute();
+            attack.execute(player);
     }
     
     public Player getPlayer()
@@ -150,6 +158,11 @@ public class Bot extends BukkitRunnable
         return health;
     }
     
+    public UUID getUniqueId()
+    {
+        return uniqueId;
+    }
+    
     private void die()
     {
         this.attack = false;
@@ -158,6 +171,8 @@ public class Bot extends BukkitRunnable
         
         dragon.setPassenger(structure.armorStand());
         dragon.setHealth(0);
+//        dragon.setGlowing(true);
+        dragon.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999, 10, false, false));
         
         dragon.playEffect(EntityEffect.DEATH);
         
@@ -169,7 +184,7 @@ public class Bot extends BukkitRunnable
         this.totallyDestroy();
     }
     
-    public void doDamage(double damage)
+    public void doDamage(double damage, Player player)
     {
         this.health -= damage;
         
@@ -178,8 +193,19 @@ public class Bot extends BukkitRunnable
             die();
         } else
         {
-            attack();
+            attack(player);
         }
+        
+        structure.armorStand().setCustomName(
+                BotStructure.BOT_NAME +
+                        ChatColor.WHITE +
+                        " [" + ChatColor.AQUA.toString() +
+                        health +
+                        ChatColor.GRAY +
+                        "/" +
+                        ChatColor.GREEN.toString() + MAX_HEALTH
+                        + ChatColor.WHITE + "]"
+        );
     }
     
     public BotStructure getStructure()

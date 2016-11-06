@@ -1,10 +1,12 @@
 package org.devathon.contest2016.combat.attacks;
 
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.LargeFireball;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Player;
 import org.devathon.contest2016.bot.Bot;
 import org.devathon.contest2016.combat.Attack;
+import org.devathon.contest2016.util.BotUtil;
 
 public class Fireballs implements Attack
 {
@@ -24,15 +26,21 @@ public class Fireballs implements Attack
     }
     
     @Override
-    public void execute()
+    public void execute(Player player)
     {
-        Location location = bot.getBotLocation().toVector()
-                .add(bot.getBotLocation().toVector().multiply(2))
-                .toLocation(world);
-        for (int i = 0; i < 3; i++)
-        {
-            world.spawn(location, LargeFireball.class);
-        }
+        ArmorStand armorStand = bot.getStructure().armorStand();
+        BotUtil.updateDirection(player.getLocation(), armorStand);
+        
+        Fireball fireball = armorStand.launchProjectile(Fireball.class);
+        
+        fireball.setIsIncendiary(false);
+        fireball.setInvulnerable(true);
+        fireball.setBounce(true);
+        fireball.setCustomName("Magical Ball of Fire");
+        fireball.setCustomNameVisible(true);
+        fireball.setGlowing(true);
+        fireball.setYield(0F);
+        fireball.setShooter(armorStand);
     }
     
     @Override
